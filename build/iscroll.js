@@ -4,6 +4,14 @@
 // Ideally update to use separate IE8 patch once released
 
 var IScroll = (function (window, document, Math) {
+
+	// Obligatory browser/device sniff hack
+	var nua = navigator.userAgent;
+	var is_android = ((nua.indexOf('Mozilla/5.0') > -1 && nua.indexOf('Android ') > -1 && nua.indexOf('AppleWebKit') > -1) && !(nua.indexOf('Chrome') > -1));
+	if (is_android) {
+		document.getElementsByTagName('body')[0].className+=' is-android-browser'; // Add body class helper
+	}
+
 var rAF = window.requestAnimationFrame	||
 	window.webkitRequestAnimationFrame	||
 	window.mozRequestAnimationFrame		||
@@ -310,7 +318,7 @@ function IScroll (el, options) {
 
 		snapThreshold: 0.334,
 
-// INSERT POINT: OPTIONS 
+// INSERT POINT: OPTIONS
 
 		startX: 0,
 		startY: 0,
@@ -362,7 +370,7 @@ function IScroll (el, options) {
 
 // INSERT POINT: NORMALIZATION
 
-	// Some defaults	
+	// Some defaults
 	this.x = 0;
 	this.y = 0;
 	this.directionX = 0;
@@ -456,6 +464,7 @@ IScroll.prototype = {
 		if ( this.options.useTransition && this.isInTransition ) {
 			pos = this.getComputedPosition();
 
+			if (is_android) { this._transitionTime(0.001); } // Scroll fix hack for Android
 			this._translate(Math.round(pos.x), Math.round(pos.y));
 			this.isInTransition = false;
 		}
@@ -1360,6 +1369,7 @@ IScroll.prototype = {
 		if ( this.options.useTransition && this.isInTransition ) {
 			pos = this.getComputedPosition();
 
+			if (is_android) { this._transitionTime(0.001); } // Scroll fix hack for Android
 			this._translate(Math.round(pos.x), Math.round(pos.y));
 			this.isInTransition = false;
 		}
@@ -1739,7 +1749,7 @@ Indicator.prototype = {
 				this.indicatorWidth = this.indicator.clientWidth;
 			}
 			this.maxPosX = this.wrapperWidth - this.indicatorWidth;
-			this.sizeRatioX = this.options.speedRatioX || (this.scroller.maxScrollX && (this.maxPosX / this.scroller.maxScrollX));	
+			this.sizeRatioX = this.options.speedRatioX || (this.scroller.maxScrollX && (this.maxPosX / this.scroller.maxScrollX));
 		}
 
 		if ( this.options.listenY ) {
@@ -1773,7 +1783,7 @@ Indicator.prototype = {
 				y = 0;
 			} else if ( y > this.maxPosY ) {
 				y = this.maxPosY;
-			}		
+			}
 		}
 
 		this.x = x;
